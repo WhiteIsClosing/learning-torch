@@ -51,7 +51,7 @@ s = x:storage()
 for i=1,s:size() do -- fill up the Storage
   s[i] = i
 end
-print(x)
+-- print(x)
 -- print(x:storage())
 
 
@@ -65,5 +65,53 @@ x:apply(function()
   i = i + 1
   return i
 end)
-print(x)
-print(x:stride())
+-- print(x)
+-- print(x:stride())
+
+----------------------------------------------------
+-- 2. Tensor Type
+----------------------------------------------------
+--[[
+  ByteTensor -- contains unsigned chars
+  CharTensor -- contains signed chars
+  ShortTensor -- contains shorts
+  IntTensor -- contains ints
+  FloatTensor -- contains floats
+  DoubleTensor -- contains doubles
+]]--
+
+-- Most numeric operations are implemented only for FloatTensor and DoubleTensor.
+-- Other Tensor types are useful if you want to save memory space.
+
+----------------------------------------------------
+-- 2.1 Default Tensor type
+----------------------------------------------------
+-- For convenience, an alias torch.Tensor is provided,
+-- which allows the user to write type-independent scripts,
+-- which can then ran after choosing the desired Tensor type with a call like
+torch.setdefaulttensortype('torch.FloatTensor')
+
+----------------------------------------------------
+-- 2.2 Efficient memory management
+----------------------------------------------------
+-- All tensor operations in this class do not make any memory copy.
+-- All these methods transform the existing tensor,
+-- or return a new tensor referencing the same storage.
+-- This magical behavior is internally obtained by good usage of the stride() and storageOffset(). Example:
+x = torch.Tensor(5):zero()
+-- print(x)
+
+-- narrow() returns a Tensor
+-- referencing the same Storage as x
+x:narrow(1, 2, 3):fill(1)
+-- print(x)
+
+-- If you really need to copy a Tensor, you can use the copy() method:
+y = torch.Tensor(x:size()):copy(x)
+-- Or the convenience method
+y = x:clone()
+
+-- We now describe all the methods for Tensor.
+-- If you want to specify the Tensor type,
+-- just replace Tensor by the name of the Tensor variant (like CharTensor).
+x = torch.CharTensor(5)
