@@ -115,3 +115,84 @@ y = x:clone()
 -- If you want to specify the Tensor type,
 -- just replace Tensor by the name of the Tensor variant (like CharTensor).
 x = torch.CharTensor(5)
+
+----------------------------------------------------
+-- 3. Tensor constructors
+----------------------------------------------------
+-- Tensor constructors, create new Tensor object, optionally, allocating new memory.
+-- By default the elements of a newly allocated memory are not initialized, therefore, might contain arbitrary numbers.
+-- Here are several ways to construct a new Tensor.
+
+-- torch.Tensor()
+-- Returns an empty tensor.
+
+-- torch.Tensor(tensor)
+-- Returns a new tensor which reference the same Storage than the given tensor.
+-- The size, stride, and storage offset are the same than the given tensor.
+
+-- The new Tensor is now going to "view" the same storage as the given tensor.
+-- As a result, any modification in the elements of the Tensor will have a impact on the elements of the given tensor,
+-- and vice-versa. No memory copy!
+
+x = torch.Tensor(2,5):fill(3.14)
+print(x)
+y = torch.Tensor(x)
+y:zero()
+print(x)
+
+----------------------------------------------------
+-- 3.1 torch.Tensor(sz1 [,sz2 [,sz3 [,sz4]]]])
+----------------------------------------------------
+-- Create a tensor up to 4 dimensions.
+-- The tensor size will be sz1 x sz2 x sx3 x sz4.
+
+----------------------------------------------------
+-- 3.2 torch.Tensor(sizes, [strides])
+----------------------------------------------------
+-- Create a tensor of any number of dimensions.
+-- The LongStorage sizes gives the size in each dimension of the tensor.
+-- The optional LongStorage strides gives the jump necessary to go from one element to the next one in the each dimension.
+-- Of course, sizes and strides must have the same number of elements.
+-- If not given, or if some elements of strides are negative,
+-- the stride() will be computed such that the tensor is as contiguous as possible in memory.
+
+-- Example, create a 4D 4x4x3x2 tensor:
+x = torch.Tensor(torch.LongStorage({4,4,3,2}))
+-- Playing with the strides can give some interesting things:
+x = torch.Tensor(torch.LongStorage({4}), torch.LongStorage({0})):zero() -- zeroes the tensor
+print(x)
+x[1] = 1 -- all elements point to the same address!
+print(x)
+
+----------------------------------------------------
+-- 3.3 torch.Tensor(storage, [storageOffset, sizes, [strides]])
+----------------------------------------------------
+-- Returns a tensor which uses the existing Storage storage,
+-- starting at position storageOffset (>=1).
+-- The size of each dimension of the tensor is given by the LongStorage sizes.
+
+-- If only storage is provided, it will create a 1D Tensor viewing the all Storage.
+
+-- The jump necessary to go from one element to the next one in each dimension is given by the optional argument LongStorage strides.
+-- If not given, or if some elements of strides are negative,
+-- the stride() will be computed such that the tensor is as contiguous as possible in memory.
+
+-- Any modification in the elements of the Storage will have an impact on the elements of the new Tensor,
+-- and vice-versa. There is no memory copy!
+
+
+-- creates a storage with 10 elements
+s = torch.Storage(10):fill(1)
+
+-- we want to see it as a 2x5 tensor
+x = torch.Tensor(s, 1, torch.LongStorage{2,5})
+
+x:zero()
+print(s)
+print(x)
+
+----------------------------------------------------
+-- 3.4 torch.Tensor(storage, [storageOffset, sz1 [, st1 ... [, sz4 [, st4]]]])
+----------------------------------------------------
+-- Convenience constructor (for the previous constructor) assuming a number of dimensions inferior or equal to 4.
+-- szi is the size in the i-th dimension, and sti it the stride in the i-th dimension.
