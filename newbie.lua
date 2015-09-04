@@ -96,3 +96,87 @@ a1 = adder(9)
 a2 = adder(36)
 print(a1(16))  --> 25
 print(a2(64))  --> 100
+
+-- Returns, func calls, and assignments all work
+-- with lists that may be mismatched in length.
+-- Unmatched receivers are nil;
+-- unmatched senders are discarded.
+
+x, y, z = 1, 2, 3, 4
+-- Now x = 1, y = 2, z = 3, and 4 is thrown away.
+
+function bar(a, b, c)
+  print(a, b, c)
+  return 4, 8, 15, 16, 23, 42
+end
+
+x, y = bar('zaphod')  --> prints "zaphod  nil nil"
+-- Now x = 4, y = 8, values 15..42 are discarded.
+
+-- Functions are first-class, may be local/global.
+-- These are the same:
+function f(x) return x * x end
+f = function (x) return x * x end
+
+-- And so are these:
+local function g(x) return math.sin(x) end
+local g; g  = function (x) return math.sin(x) end
+-- the 'local g' decl makes g-self-references ok.
+
+-- Trig funcs work in radians, by the way.
+
+-- Calls with one string param don't need parens:
+print 'hello'  -- Works fine.
+
+----------------------------------------------------
+-- 3. Tables.
+----------------------------------------------------
+
+-- Tables = Lua's only compound data structure;
+--          they are associative arrays.
+-- Similar to php arrays or js objects, they are
+-- hash-lookup dicts that can also be used as lists.
+
+-- Using tables as dictionaries / maps:
+
+-- Dict literals have string keys by default:
+t = {key1 = 'value1', key2 = false}
+
+-- String keys can use js-like dot notation:
+print(t.key1)  -- Prints 'value1'.
+t.newKey = {}  -- Adds a new key/value pair.
+t.key2 = nil   -- Removes key2 from the table.
+
+-- Literal notation for any (non-nil) value as key:
+u = {['@!#'] = 'qbert', [{}] = 1729, [6.28] = 'tau'}
+print(u[6.28])  -- prints "tau"
+
+-- Key matching is basically by value for numbers
+-- and strings, but by identity for tables.
+a = u['@!#']  -- Now a = 'qbert'.
+b = u[{}]     -- We might expect 1729, but it's nil:
+-- b = nil since the lookup fails. It fails
+-- because the key we used is not the same object
+-- as the one used to store the original value. So
+-- strings & numbers are more portable keys.
+
+-- A one-table-param function call needs no parens:
+function h(x) print(x.key1) end
+h{key1 = 'Sonmi~451'}  -- Prints 'Sonmi~451'.
+
+for key, val in pairs(u) do  -- Table iteration.
+  print(key, val)
+end
+
+-- _G is a special table of all globals.
+print(_G['_G'] == _G)  -- Prints 'true'.
+
+-- Using tables as lists / arrays:
+
+-- List literals implicitly set up int keys:
+v = {'value1', 'value2', 1.21, 'gigawatts'}
+for i = 1, #v do  -- #v is the size of v for lists.
+  print(v[i])  -- Indices start at 1 !! SO CRAZY!
+end
+-- A 'list' is not a real type. v is just a table
+-- with consecutive integer keys, treated as a list.
