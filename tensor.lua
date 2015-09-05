@@ -311,3 +311,22 @@ torch.DoubleTensor(4):fill(3.14)
 -- [self] zero()
 ----------------------------------------------------
 torch.Tensor(4):zero()
+
+
+----------------------------------------------------
+-- 8. Resizing
+----------------------------------------------------
+-- When resizing to a larger size, the underlying Storage is resized to fit all the elements of the Tensor.
+-- When resizing to a smaller size, the underlying Storage is not resized.
+-- Important note:
+-- the content of a Tensor after resizing is undertermined as strides might have been completely changed.
+-- In particular, the elements of the resized tensor are contiguous in memory.
+
+-- [self] resizeAs(tensor)
+-- Resize the tensor as the given tensor (of the same type).
+
+-- [self] resize(sizes)
+-- Resize the tensor according to the given LongStorage size.
+
+-- [self] resize(sz1 [,sz2 [,sz3 [,sz4]]]])
+-- Convenience method of the previous method, working for a number of dimensions up to 4.
