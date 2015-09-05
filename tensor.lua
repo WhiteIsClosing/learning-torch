@@ -261,3 +261,35 @@ i = 0; x:apply(function() i = i + 1; return i end)
 -- x[{2,3}] -- another way to return row 2, column 3
 -- x[torch.LongStorage{2,3}] -- yet another way to return row 2, column 3
 -- x[torch.le(x,3)] -- torch.le returns a ByteTensor that acts as a mask
+
+----------------------------------------------------
+-- 6. Referencing a tensor to an existing tensor or chunk of memory
+----------------------------------------------------
+-- A Tensor being a way of viewing a Storage,
+-- it is possible to "set" a Tensor such that it views an existing Storage.
+-- Note that if you want to perform a set on an empty Tensor like, do it with constructors
+y = torch.Storage(10)
+x = torch.Tensor(y, 1, 10)
+----------------------------------------------------
+-- [self] set(tensor)
+----------------------------------------------------
+x = torch.Tensor(2,5):fill(3.14)
+y = torch.Tensor():set(x)
+y:zero()
+-- shared memory, all zero now
+----------------------------------------------------
+-- [self] set(storage, [storageOffset, sizes, [strides]])
+----------------------------------------------------
+-- The Tensor is now going to "view" the given storage,
+-- starting at position storageOffset (>=1) with the given dimension sizes and the optional given strides.
+-- As the result, any modification in the elements of the Storage will have a impact on the elements of the Tensor, and vice-versa.
+-- This is an efficient method, as there is no memory copy!
+-- If only storage is provided, the whole storage will be viewed as a 1D Tensor.
+-- creates a storage with 10 elements
+s = torch.Storage(10):fill(1)
+
+-- we want to see it as a 2x5 tensor
+sz = torch.LongStorage({2,5})
+x = torch.Tensor()
+x:set(s, 1, sz)
+x:zero()
