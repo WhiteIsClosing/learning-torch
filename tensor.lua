@@ -196,3 +196,39 @@ print(x)
 ----------------------------------------------------
 -- Convenience constructor (for the previous constructor) assuming a number of dimensions inferior or equal to 4.
 -- szi is the size in the i-th dimension, and sti it the stride in the i-th dimension.
+
+----------------------------------------------------
+-- 4. Function Calls
+----------------------------------------------------
+-- [Tensor] clone()
+-- [Tensor] contiguous
+-- [Tensor or string] type(type)
+-- [Tensor] typeAs(tensor)
+-- [boolean] isTensor(object)
+-- [Tensor] byte(), char(), short(), int(), long(), float(), double()
+-- [number] nDimension()
+-- [number] dim()
+-- [number] size(dim)
+-- [LongStorage] size()
+-- [LongStorage] #self
+
+-- [number] stride(dim)
+-- Returns the jump necessary to go from one element to the next one in the specified dimension dim. Example:
+--[[
+  x = torch.Tensor(4,5):zero()
+  > x
+   0 0 0 0 0
+   0 0 0 0 0
+   0 0 0 0 0
+   0 0 0 0 0
+  [torch.DoubleTensor of dimension 4x5]
+
+  -- elements in a row are contiguous in memory
+  > x:stride(2)
+  1
+
+  -- to go from one element to the next one in a column
+  -- we need here to jump the size of the row
+  > x:stride(1)
+  5
+--]]
