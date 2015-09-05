@@ -232,3 +232,32 @@ print(x)
   > x:stride(1)
   5
 --]]
+
+----------------------------------------------------
+-- 5. Querying Elements
+----------------------------------------------------
+-- Elements of a tensor can be retrieved with the [index] operator.
+
+-- If index is a number,
+-- [index] operator is equivalent to a select(1, index) if the tensor has more than one dimension.
+-- This operation returns a slice of the tensor that shares the same underlying storage.
+-- If the tensor is a 1D tensor, it returns the value at index in this tensor.
+
+-- If index is a table,
+-- the table must contain n numbers,
+-- where n is the number of dimensions of the Tensor.
+-- It will return the element at the given position.
+
+-- In the same spirit,
+-- index might be a LongStorage, specifying the position (in the Tensor) of the element to be retrieved.
+
+-- If index is a ByteTensor
+-- in which each element is 0 or 1 then it acts as a selection mask used to extract a subset of the original tensor.
+-- This is particularly useful with logical operators like torch.le.
+x = torch.Tensor(3,3)
+i = 0; x:apply(function() i = i + 1; return i end)
+-- x[2] -- returns row 2
+-- x[2][3] -- returns row 2, column 3
+-- x[{2,3}] -- another way to return row 2, column 3
+-- x[torch.LongStorage{2,3}] -- yet another way to return row 2, column 3
+-- x[torch.le(x,3)] -- torch.le returns a ByteTensor that acts as a mask
