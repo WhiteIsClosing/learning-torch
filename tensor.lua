@@ -293,3 +293,21 @@ sz = torch.LongStorage({2,5})
 x = torch.Tensor()
 x:set(s, 1, sz)
 x:zero()
+----------------------------------------------------
+-- 7. Copying and initializing
+----------------------------------------------------
+-- [self] copy(tensor)
+----------------------------------------------------
+-- Replace the elements of the Tensor by copying the elements of the given tensor.
+-- The number of elements must match, but the sizes might be different.
+x = torch.Tensor(4):fill(1)
+y = torch.Tensor(2,2):copy(x)
+----------------------------------------------------
+-- [self] fill(value)
+----------------------------------------------------
+-- Fill the tensor with the given value.
+torch.DoubleTensor(4):fill(3.14)
+----------------------------------------------------
+-- [self] zero()
+----------------------------------------------------
+torch.Tensor(4):zero()
