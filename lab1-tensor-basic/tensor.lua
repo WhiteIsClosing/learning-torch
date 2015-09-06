@@ -330,3 +330,236 @@ torch.Tensor(4):zero()
 
 -- [self] resize(sz1 [,sz2 [,sz3 [,sz4]]]])
 -- Convenience method of the previous method, working for a number of dimensions up to 4.
+
+----------------------------------------------------
+-- 9. Extracting sub-tensors
+----------------------------------------------------
+-- Each of these methods returns a Tensor which is a sub-tensor of the given tensor,
+-- with the same Storage. Hence, any modification in the memory of the sub-tensor will have an impact on the primary tensor, and vice-versa.
+
+-- These methods are very fast, as they do not involve any memory copy.
+
+----------------------------------------------------
+-- [self] narrow(dim, index, size)
+----------------------------------------------------
+-- Returns a new Tensor which is a narrowed version of the current one: the dimension dim is narrowed from index to index+size-1.
+x = torch.Tensor(5, 6):zero()
+-- print(x)
+y = x:narrow(1, 2, 3) -- narrow dimension 1 from index 2 to index 2+3-1
+y:fill(1) -- fill with 1
+-- print(y)
+-- print(x)
+
+-- x = torch.Tensor(5, 6):zero()
+-- > x
+--
+-- 0 0 0 0 0 0
+-- 0 0 0 0 0 0
+-- 0 0 0 0 0 0
+-- 0 0 0 0 0 0
+-- 0 0 0 0 0 0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- y = x:narrow(1, 2, 3) -- narrow dimension 1 from index 2 to index 2+3-1
+-- y:fill(1) -- fill with 1
+-- > y
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+-- [torch.DoubleTensor of dimension 3x6]
+--
+-- > x -- memory in x has been modified!
+--  0  0  0  0  0  0
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+
+----------------------------------------------------
+-- [Tensor] sub(dim1s, dim1e ... [, dim4s [, dim4e]])
+----------------------------------------------------
+-- This method is equivalent to do a series of narrow up to the first 4 dimensions.
+-- It returns a new Tensor which is a sub-tensor going from index dimis to dimie in the i-th dimension.
+-- Negative values are interpreted index starting from the end: -1 is the last index, -2 is the index before the last index, ...
+
+-- x = torch.Tensor(5, 6):zero()
+-- > x
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- y = x:sub(2,4):fill(1) -- y is sub-tensor of x:
+-- > y                    -- dimension 1 starts at index 2, ends at index 4
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+-- [torch.DoubleTensor of dimension 3x6]
+--
+-- > x                    -- x has been modified!
+--  0  0  0  0  0  0
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  1  1  1  1  1  1
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- z = x:sub(2,4,3,4):fill(2) -- we now take a new sub-tensor
+-- > z                        -- dimension 1 starts at index 2, ends at index 4
+--                            -- dimension 2 starts at index 3, ends at index 4
+--  2  2
+--  2  2
+--  2  2
+-- [torch.DoubleTensor of dimension 3x2]
+--
+-- > x                        -- x has been modified
+--
+--  0  0  0  0  0  0
+--  1  1  2  2  1  1
+--  1  1  2  2  1  1
+--  1  1  2  2  1  1
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- > y:sub(-1, -1, 3, 4)      -- negative values = bounds
+--  2  2
+-- [torch.DoubleTensor of dimension 1x2]
+
+----------------------------------------------------
+-- [Tensor] select(dim, index)
+----------------------------------------------------
+-- Returns a new Tensor which is a tensor slice at the given index in the dimension dim.
+-- The returned tensor has one less dimension: the dimension dim is removed.
+-- As a result, it is not possible to select() on a 1D tensor.
+-- Note that "selecting" on the first dimension is equivalent to use the [] operator
+
+-- x = torch.Tensor(5,6):zero()
+-- > x
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- y = x:select(1, 2):fill(2) -- select row 2 and fill up
+-- > y
+--  2
+--  2
+--  2
+--  2
+--  2
+--  2
+-- [torch.DoubleTensor of dimension 6]
+--
+-- > x
+--  0  0  0  0  0  0
+--  2  2  2  2  2  2
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- z = x:select(2,5):fill(5) -- select column 5 and fill up
+-- > z
+--  5
+--  5
+--  5
+--  5
+--  5
+-- [torch.DoubleTensor of dimension 5]
+--
+-- > x
+--  0  0  0  0  5  0
+--  2  2  2  2  5  2
+--  0  0  0  0  5  0
+--  0  0  0  0  5  0
+--  0  0  0  0  5  0
+-- [torch.DoubleTensor of dimension 5x6]
+
+----------------------------------------------------
+-- [Tensor] [{ dim1,dim2,... }] or [{ {dim1s,dim1e}, {dim2s,dim2e} }]
+----------------------------------------------------
+-- The indexing operator []
+-- can be used to combine narrow/sub and select in a concise an efficient way.
+-- It can also be used to copy, and fill (sub) tensors.
+
+-- This operator also works with an input mask made of a ByteTensor with 0 and 1 elements, e.g with a logical operator.
+-- x = torch.Tensor(5, 6):zero()
+-- x[{ 1,3 }] = 1 -- sets element at (i=1,j=3) to 1
+-- x[{ 2,{2,4} }] = 2  -- sets a slice of 3 elements to 2
+-- x[{ {},4 }] = -1 -- sets the full 4th column to -1
+-- x[{ {},2 }] = torch.range(1,5) -- copy a 1D tensor to a slice of x
+-- x[torch.lt(x,0)] = -2 -- sets all negative elements to -2 via a mask
+-- print(x)
+-- x = torch.Tensor(5, 6):zero()
+-- > x
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+--  0 0 0 0 0 0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- x[{ 1,3 }] = 1 -- sets element at (i=1,j=3) to 1
+-- > x
+--  0  0  1  0  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- x[{ 2,{2,4} }] = 2  -- sets a slice of 3 elements to 2
+-- > x
+--  0  0  1  0  0  0
+--  0  2  2  2  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+--  0  0  0  0  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- x[{ {},4 }] = -1 -- sets the full 4th column to -1
+-- > x
+--  0  0  1 -1  0  0
+--  0  2  2 -1  0  0
+--  0  0  0 -1  0  0
+--  0  0  0 -1  0  0
+--  0  0  0 -1  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- x[{ {},2 }] = torch.range(1,5) -- copy a 1D tensor to a slice of x
+-- > x
+--
+--  0  1  1 -1  0  0
+--  0  2  2 -1  0  0
+--  0  3  0 -1  0  0
+--  0  4  0 -1  0  0
+--  0  5  0 -1  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+--
+-- x[torch.lt(x,0)] = -2 -- sets all negative elements to -2 via a mask
+-- > x
+--
+--  0  1  1 -2  0  0
+--  0  2  2 -2  0  0
+--  0  3  0 -2  0  0
+--  0  4  0 -2  0  0
+--  0  5  0 -2  0  0
+-- [torch.DoubleTensor of dimension 5x6]
+
+----------------------------------------------------
+-- [Tensor] index(dim, index)
+----------------------------------------------------
+-- Returns a new Tensor which indexes the original Tensor along dimension dim using the entries in torch.LongTensor index.
+-- The returned Tensor has the same number of dimensions as the original Tensor.
+-- The returned Tensor does not use the same storage as the original Tensor -- see below for storing the result in an existing Tensor.
+
+-- [self] narrow(dim, index, size)
+-- [Tensor] sub(dim1s, dim1e ... [, dim4s [, dim4e]])
+-- [Tensor] select(dim, index)
+-- [Tensor] [{ dim1,dim2,... }] or [{ {dim1s,dim1e}, {dim2s,dim2e} }]
+-- [Tensor] index(dim, index)
