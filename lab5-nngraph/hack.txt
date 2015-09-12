@@ -1,0 +1,4 @@
+to visualize your graph 
+make sure you type qlua instead of th
+
+https://github.com/torch/qtlua/issues/9

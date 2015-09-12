@@ -1,0 +1,80 @@
+digraph G {
+	graph [bb="0,0,480,1508"];
+	node [label="\N",
+		shape=oval
+	];
+	n1	 [color=green,
+		fillcolor=yellow,
+		height=1.3356,
+		label="L3 (1)\ninput = {Tensor[160]}\lmodule = nn.Tanh\lgradOutput = {Tensor[160]}",
+		pos="245,160",
+		style=filled,
+		tooltip="[annotation.lua]:13",
+		width=3.4842];
+	n2	 [height=1.041,
+		label="Node2\ninput = {Tensor[160]}\lgradOutput = {Tensor[160]}",
+		pos="245,38",
+		tooltip="[[C]]:-1",
+		width=3.4842];
+	n1 -> n2	 [pos="e,245,75.722 245,111.57 245,103.1 245,94.269 245,85.81"];
+	n3	 [height=1.3356,
+		label="Node3\ninput = {Tensor[80]}\lmodule = nn.Linear(80 -> 160)\lgradOutput = {Tensor[160]}",
+		pos="245,292",
+		tooltip="[annotation.lua]:13",
+		width=3.7508];
+	n3 -> n1	 [pos="e,245,208.48 245,243.7 245,235.54 245,226.99 245,218.6"];
+	n4	 [height=1.6303,
+		label="Node4\ninput = {Tensor[20],Tensor[60]}\lmodule = nn.JoinTable\lmapindex = {Node5,Node6}\lgradOutput = {Tensor[80]}",
+		pos="245,435",
+		tooltip="[annotation.lua]:13",
+		width=3.956];
+	n4 -> n3	 [pos="e,245,340.12 245,376.24 245,367.7 245,358.9 245,350.36"];
+	n5	 [color=red,
+		height=1.9249,
+		label="L1 (5)\ndesc = Level 1 Node\ninput = {Tensor[20]}\lmodule = nn.Tanh\lgradOutputBuffer = Tensor[20]\lgradOutput = {Tensor[20],Tensor[\
+20]}",
+		pos="167,1040",
+		tooltip="[annotation.lua]:5",
+		width=4.647];
+	n5 -> n4	 [pos="e,208.74,491.86 160.89,970.72 154.15,871.52 149.39,682.72 193,530 195.79,520.22 199.76,510.33 204.27,500.83"];
+	n10	 [height=1.6303,
+		label="Node10\ninput = {Tensor[10],Tensor[20]}\lmodule = nn.JoinTable\lmapindex = {Node9,Node5}\lgradOutput = {Tensor[30]}",
+		pos="338,875",
+		tooltip="[annotation.lua]:9",
+		width=3.956];
+	n5 -> n10	 [pos="e,282.33,929.07 233.11,975.98 246.83,962.9 261.25,949.16 274.86,936.18"];
+	n6	 [color=blue,
+		fontcolor=green,
+		height=1.6303,
+		label="L2 (6)\ndesc = Level 2 Node\ninput = {Tensor[60]}\lmodule = nn.Tanh\lgradOutput = {Tensor[60]}",
+		pos="323,589",
+		tooltip="[annotation.lua]:9",
+		width=3.346];
+	n6 -> n4	 [pos="e,274.1,492.7 294.18,531.83 289.16,522.06 283.9,511.81 278.77,501.8"];
+	n7	 [height=1.3356,
+		label="Node7\ninput = {Tensor[10]}\lmodule = nn.Linear(10 -> 20)\lgradOutput = {Tensor[20]}",
+		pos="186,1194",
+		tooltip="[annotation.lua]:5",
+		width=3.6126];
+	n7 -> n5	 [pos="e,175.55,1109.4 180.09,1145.7 179.05,1137.4 177.93,1128.5 176.82,1119.5"];
+	n8	 [height=1.3356,
+		label="Node8\ninput = {Tensor[30]}\lmodule = nn.Linear(30 -> 60)\lgradOutput = {Tensor[60]}",
+		pos="331,732",
+		tooltip="[annotation.lua]:9",
+		width=3.6126];
+	n8 -> n6	 [pos="e,326.28,647.74 328.31,683.66 327.84,675.38 327.35,666.62 326.85,657.91"];
+	n9	 [height=1.6303,
+		label="Node9\ninput = {Tensor[10]}\lmodule = nn.Identity\lgradOutputBuffer = Tensor[10]\lgradOutput = {Tensor[10],Tensor[10]}",
+		pos="284,1337",
+		tooltip="[annotation.lua]:4",
+		width=4.647];
+	n9 -> n7	 [pos="e,217.96,1241 244.99,1279.9 237.98,1269.8 230.69,1259.3 223.72,1249.3"];
+	n9 -> n10	 [pos="e,344.21,933.71 311.84,1279 316.85,1267 321.56,1254.3 325,1242 353.28,1141.1 350.55,1018.5 345,943.91"];
+	n10 -> n8	 [pos="e,333.34,780.12 335.13,816.24 334.71,807.7 334.27,798.9 333.85,790.36"];
+	n11	 [height=1.041,
+		label="Node11\ninput = {Tensor[10]}\lgradOutput = {Tensor[10]}",
+		pos="284,1470",
+		tooltip="[[C]]:-1",
+		width=3.346];
+	n11 -> n9	 [pos="e,284,1395.9 284,1432.5 284,1424.3 284,1415.2 284,1406.1"];
+}
